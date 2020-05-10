@@ -1,0 +1,16 @@
+{
+    "name": "serverless-ratings",
+    "version": "1.0.0",
+    "license": "MIT",
+    "scripts": {
+        "deploy": "serverless deploy",
+        "delete": "serverless remove"
+    },
+    "dependencies": {
+        "aws-sdk": "^2.673.0",
+        "uuid": "^8.0.0"
+    },
+    "devDependencies": {
+        "serverless": "^1.70.0"
+    }
+}

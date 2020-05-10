@@ -1,0 +1,61 @@
+service: beer-rating
+
+custom:
+    dynamoTableName: ${file(./constants.json):dynamoTableName}
+
+provider:
+    name: aws
+    runtime: nodejs12.x
+
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - 'dynamodb:*'
+          Resource:
+              Fn::Join:
+                  - ':'
+                  - - 'arn:aws:dynamodb'
+                    - 'Ref': 'AWS::Region'
+                    - 'Ref': 'AWS::AccountId'
+                    - 'table/${self:custom.dynamoTableName}'
+
+resources:
+    Resources:
+        BeerDynamo:
+            Type: 'AWS::DynamoDB::Table'
+            Properties:
+                AttributeDefinitions:
+                    - AttributeName: id
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: id
+                      KeyType: HASH
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 1
+                    WriteCapacityUnits: 1
+                TableName: ${self:custom.dynamoTableName}
+
+functions:
+    hello:
+        handler: handler.hello
+        events:
+            - http:
+                  path: beer/hello
+                  method: get
+                  cors: true
+
+    addRating:
+        handler: handler.addRating
+        events:
+            - http:
+                  path: beer/rating
+                  method: post
+                  cors: true
+
+    getRating:
+        handler: handler.getRating
+        events:
+            - http:
+                  path: beer/rating
+                  method: get
+                  cors: true
